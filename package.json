@@ -1,0 +1,27 @@
+{
+  "name": "backend_test1",
+  "version": "1.0.0",
+  "description": "backend test i am learing backend",
+  "homepage": "https://github.com/Anoopraja/backend_test1#readme",
+  "bugs": {
+    "url": "https://github.com/Anoopraja/backend_test1/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Anoopraja/backend_test1.git"
+  },
+  "license": "ISC",
+  "author": "Anoop prajapati",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.1",
+    "express": "^5.2.1",
+    "mongoose": "^9.10.1",
+    "nodemon": "^3.1.14"
+  }
+}
