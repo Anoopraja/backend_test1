@@ -12,7 +12,6 @@ const secret_key = process.env.JWT_SECRET
 
 const registerUser = async (req, res) => {
     try {
-
         const { username, gmail, password } = req.body;
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
@@ -22,7 +21,6 @@ const registerUser = async (req, res) => {
             password: hash
         });
         console.log("USER CREATED:", user);
-
         res.status(201).json({
             success: true,
             message: "User registered successfully"
