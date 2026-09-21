@@ -49,15 +49,17 @@ const getAllUser = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "something went wrong",
-            data: user
+            // data: user
         })
     }
 }
 
 const userlogin = async (req, res) => {
     try {
-        const { gmail, password } = req.body
+        const { gmail, password } = req.body;
+
         const user = await User.findOne({ gmail });
+
         if (!user) {
             return res.status(404).json({
                 success: false,
@@ -75,25 +77,44 @@ const userlogin = async (req, res) => {
                 message: "Invalid password"
             });
         }
+        const token = jwt.sign(
+            {
+                userId: user._id
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "7d"
+            }
+        );
+
+        // COOKIE ME TOKEN SAVE
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        });
+
         res.status(200).json({
             success: true,
             message: "Login successful",
-            // user: {
-            //     id: user._id,
-            //     username: user.username,
-            //     gmail: user.gmail
-            // }
-        });
 
+            user: {
+                id: user._id,
+                username: user.username,
+                gmail: user.gmail
+            }
+        });
     } catch (err) {
-        console.log("password galat hai bhai")
+
+        console.log("LOGIN ERROR:", err);
+
         res.status(500).json({
             success: false,
-            message: "something went wrong",
-
-        })
+            message: "Something went wrong"
+        });
     }
-}
+};
 
 export {
     registerUser,

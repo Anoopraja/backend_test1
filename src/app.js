@@ -1,8 +1,10 @@
 import express from 'express';
 import testRoute from "./routes/test.route.js";
 import userRoute from "./routes/user.route.js";
-const app = express();
+import cookieParser from "cookie-parser";
 
+const app = express();
+app.use(cookieParser());
 app.use(express.json());
 app.use("/api/test", testRoute);
 app.use("/api/user", userRoute)
