@@ -1,86 +1,70 @@
 import bcrypt from "bcrypt";
 import User from "../models/user.model.js";
+import jwt from "jsonwebtoken"
 
+
+
+const secret_key = process.env.JWT_SECRET
 
 
 // console.log("REGISTER ROUTE HIT");
 
 
-const registerUser = async (req,res) => {
+const registerUser = async (req, res) => {
     try {
 
-    const { username, gmail, password } = req.body;
+        const { username, gmail, password } = req.body;
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(password, salt);
+        const user = await User.create({
+            username,
+            gmail,
+            password: hash
+        });
+        console.log("USER CREATED:", user);
 
-    const salt = await bcrypt.genSalt(10);
+        res.status(201).json({
+            success: true,
+            message: "User registered successfully"
+        });
 
-    const hash = await bcrypt.hash(password, salt);
-
-    const user = await User.create({
-
-        username,
-
-        gmail,
-
-        password: hash
-
-    });
-
-    console.log("USER CREATED:", user);
-
-    res.status(201).json({
-
-        success: true,
-
-        message: "User registered successfully"
-
-    });
-
-} catch (error) {
-
-    console.log("REGISTER ERROR:", error);
-
-    res.status(500).json({
-
-        success: false,
-        message: error.message
-
-    });
-
+    } catch (error) {
+        console.log("REGISTER ERROR:", error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
 }
-}
-
-const getAllUser = async (req,res) => {
-
-    try{ 
-    const user = await User.find()
-      res.status(200).json({
+const getAllUser = async (req, res) => {
+    try {
+        const user = await User.find()
+        res.status(200).json({
             success: true,
             message: "All users fetched successfully",
             data: user,
         });
     }
-    catch(err){
+    catch (err) {
         res.status(500).json({
             success: false,
-            message:"something went wrong",
-            data:user
-
+            message: "something went wrong",
+            data: user
         })
     }
-
 }
 
-const userlogin = async (req,res) => {
-    try{
-        const { gmail , password } = req.body
+const userlogin = async (req, res) => {
+    try {
+        const { gmail, password } = req.body
         const user = await User.findOne({ gmail });
-        if(!user){
-             return res.status(404).json({
+        if (!user) {
+            return res.status(404).json({
                 success: false,
                 message: "User not found"
             });
         }
-         const isPasswordCorrect = await bcrypt.compare(
+        const isPasswordCorrect = await bcrypt.compare(
             password,
             user.password
         );
@@ -91,7 +75,7 @@ const userlogin = async (req,res) => {
                 message: "Invalid password"
             });
         }
-         res.status(200).json({
+        res.status(200).json({
             success: true,
             message: "Login successful",
             // user: {
@@ -101,9 +85,7 @@ const userlogin = async (req,res) => {
             // }
         });
 
-
-
-     }catch(err){
+    } catch (err) {
         console.log("password galat hai bhai")
         res.status(500).json({
             success: false,
